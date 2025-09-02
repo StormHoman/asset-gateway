@@ -145,10 +145,6 @@
                 return;
             }
             
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
-            }
-
             status.textContent = `PROCESS: Navigating to URL...`;
             status.classList.remove('text-red-400', 'text-blue-400');
             status.classList.add('text-green-400');
