@@ -60,6 +60,16 @@
             animation: scan 3s linear infinite;
             animation-delay: 0.5s;
         }
+        
+        /* Modal fade-in animation */
+        @keyframes fadeInModal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-fade-in {
+            animation: fadeInModal 0.3s ease-out forwards;
+        }
+
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,7 +77,12 @@
 </head>
 <body class="bg-gray-800 text-gray-300 flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-xl mx-auto p-8 bg-gray-900 border border-blue-500/30 rounded-lg shadow-2xl shadow-blue-500/10 text-center fade-in-card">
+    <div class="relative w-full max-w-xl mx-auto p-8 bg-gray-900 border border-blue-500/30 rounded-lg shadow-2xl shadow-blue-500/10 text-center fade-in-card">
+        <!-- Help Button -->
+        <button id="helpButton" class="absolute top-4 right-4 text-gray-500 hover:text-blue-400 transition-colors duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        </button>
+
         <!-- Header Section -->
         <div class="flex justify-center items-center flex-col gap-4 mb-6">
              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"/></svg>
@@ -96,11 +111,28 @@
         </button>
     </div>
 
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden z-50 modal-fade-in">
+        <div class="relative bg-gray-800 bg-opacity-80 backdrop-blur-sm border border-blue-500/50 rounded-lg shadow-xl p-8 max-w-md w-full text-center">
+            <button id="closeModalButton" class="absolute top-2 right-2 text-gray-400 hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-white mb-4">Instructions</h2>
+            <p class="text-gray-300 text-lg">
+                Please scan a QR code of the asset or accessory and check it out to yourself. Ask an IT person to help you if you are stuck.
+            </p>
+        </div>
+    </div>
+
+
     <script>
         // Get references to the HTML elements we need to interact with
         const scannerInput = document.getElementById('scannerInput');
         const goButton = document.getElementById('goButton');
         const status = document.getElementById('status');
+        const helpButton = document.getElementById('helpButton');
+        const helpModal = document.getElementById('helpModal');
+        const closeModalButton = document.getElementById('closeModalButton');
 
         // This function handles the logic of opening the scanned URL
         function openScannedLink() {
@@ -142,12 +174,30 @@
         
         goButton.addEventListener('click', openScannedLink);
 
+        // --- New Modal Listeners ---
+        helpButton.addEventListener('click', () => {
+            helpModal.classList.remove('hidden');
+        });
+
+        closeModalButton.addEventListener('click', () => {
+            helpModal.classList.add('hidden');
+        });
+
+        // Close modal if user clicks outside of it
+        helpModal.addEventListener('click', (event) => {
+            if (event.target === helpModal) {
+                helpModal.classList.add('hidden');
+            }
+        });
+
+
         window.addEventListener('load', () => {
             scannerInput.focus();
+            // Reset status on page load/reload
             status.textContent = 'STATUS: Awaiting input...';
             status.className = 'text-lg text-blue-400 mb-8 min-h-[28px] transition-colors duration-300 font-mono';
         });
-
+        
         scannerInput.addEventListener('blur', () => {
             setTimeout(() => scannerInput.focus(), 100);
         });
