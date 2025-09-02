@@ -29,21 +29,21 @@
         <!-- Header Section with new "link" icon -->
         <div class="flex justify-center items-center flex-col gap-4 mb-6">
              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"/></svg>
-            <h1 class="text-4xl font-bold text-gray-100 tracking-wider uppercase">Link Interface</h1>
+            <h1 class="text-4xl font-bold text-gray-100 tracking-wider uppercase">Asset Gateway</h1>
         </div>
         <p id="status" class="text-lg text-blue-400 mb-8 min-h-[28px] transition-colors duration-300 font-mono">STATUS: Awaiting input...</p>
 
         <!-- The main input field for the scanner -->
         <div class="relative">
-            <input
-                type="text"
+            <input 
+                type="text" 
                 id="scannerInput"
                 autofocus
                 placeholder="Scan Asset Tag or URL..."
                 class="w-full text-center text-xl p-4 border-2 border-gray-600 bg-gray-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-300 text-white placeholder-gray-500"
             >
         </div>
-
+        
         <!-- A manual button is included as a fallback -->
         <button id="goButton" class="mt-8 w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition-all duration-300 active:bg-blue-800 text-lg uppercase tracking-wider">
             Dispatch
@@ -66,7 +66,7 @@
                 status.classList.add('text-red-400');
                 return;
             }
-
+            
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 url = 'https://' + url;
             }
@@ -96,7 +96,7 @@
                 openScannedLink();
             }
         });
-
+        
         goButton.addEventListener('click', openScannedLink);
 
         window.addEventListener('load', () => {
@@ -113,3 +113,4 @@
     </script>
 </body>
 </html>
+
