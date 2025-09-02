@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Gateway</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Add a subtle animation for the card on load */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-card {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        body {
+            font-family: 'Roboto Mono', monospace;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-800 text-gray-300 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-xl mx-auto p-8 bg-gray-900 border border-blue-500/30 rounded-lg shadow-2xl shadow-blue-500/10 text-center fade-in-card">
+        <!-- Header Section with new "link" icon -->
+        <div class="flex justify-center items-center flex-col gap-4 mb-6">
+             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"/></svg>
+            <h1 class="text-4xl font-bold text-gray-100 tracking-wider uppercase">Link Interface</h1>
+        </div>
+        <p id="status" class="text-lg text-blue-400 mb-8 min-h-[28px] transition-colors duration-300 font-mono">STATUS: Awaiting input...</p>
+
+        <!-- The main input field for the scanner -->
+        <div class="relative">
+            <input
+                type="text"
+                id="scannerInput"
+                autofocus
+                placeholder="Scan Asset Tag or URL..."
+                class="w-full text-center text-xl p-4 border-2 border-gray-600 bg-gray-800 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition duration-300 text-white placeholder-gray-500"
+            >
+        </div>
+
+        <!-- A manual button is included as a fallback -->
+        <button id="goButton" class="mt-8 w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/50 transition-all duration-300 active:bg-blue-800 text-lg uppercase tracking-wider">
+            Dispatch
+        </button>
+    </div>
+
+    <script>
+        // Get references to the HTML elements we need to interact with
+        const scannerInput = document.getElementById('scannerInput');
+        const goButton = document.getElementById('goButton');
+        const status = document.getElementById('status');
+
+        // This function handles the logic of opening the scanned URL
+        function openScannedLink() {
+            let url = scannerInput.value.trim();
+
+            if (!url) {
+                status.textContent = 'ERROR: Input stream empty. Please rescan.';
+                status.classList.remove('text-blue-400', 'text-green-400');
+                status.classList.add('text-red-400');
+                return;
+            }
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+
+            status.textContent = `PROCESS: Navigating to URL...`;
+            status.classList.remove('text-red-400', 'text-blue-400');
+            status.classList.add('text-green-400');
+
+            // *** MAJOR CHANGE HERE ***
+            // This is the most reliable method for mobile devices.
+            // It navigates the CURRENT tab to the new URL.
+            try {
+                window.location.href = url;
+            } catch (error) {
+                 console.error("Failed to navigate:", error);
+                status.textContent = 'CRITICAL: Invalid URL or navigation failed.';
+                status.classList.remove('text-green-400');
+                status.classList.add('text-red-400');
+            }
+        }
+
+        // --- Event Listeners ---
+
+        scannerInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                openScannedLink();
+            }
+        });
+
+        goButton.addEventListener('click', openScannedLink);
+
+        window.addEventListener('load', () => {
+            scannerInput.focus();
+            // Reset status on page load/reload
+            status.textContent = 'STATUS: Awaiting input...';
+            status.className = 'text-lg text-blue-400 mb-8 min-h-[28px] transition-colors duration-300 font-mono';
+        });
+
+        scannerInput.addEventListener('blur', () => {
+            setTimeout(() => scannerInput.focus(), 100); // Increased timeout slightly for mobile
+        });
+
+    </script>
+</body>
+</html>
